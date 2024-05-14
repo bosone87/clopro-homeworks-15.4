@@ -1,0 +1,48 @@
+---
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: phpmyadmin
+---
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: phpmyadmin-deployment
+        namespace: phpmyadmin
+        labels:
+          app: phpmyadmin
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: phpmyadmin
+        template:
+          metadata:
+            labels:
+              app: phpmyadmin
+          spec:
+            containers:
+              - name: phpmyadmin
+                image: phpmyadmin/phpmyadmin
+                ports:
+                  - containerPort: 80
+                env:
+                  - name: PMA_HOST
+                    value: rc1a-zjbxax5o3y55tstt.mdb.yandexcloud.net
+                  - name: PMA_PORT
+                    value: "3306"
+                  - name: MYSQL_ROOT_PASSWORD 
+                    value: "netology1"
+---
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: phpmyadmin-service
+        namespace: phpmyadmin
+      spec:
+        selector:
+          app: phpmyadmin
+        ports:
+          - port: 80
+            targetPort: 80
+        type: LoadBalancer
